@@ -24,3 +24,25 @@ p {
      border-radius:.5em;
      background-color:darkgrey;
  }
+
+ /* new bit*/
+
+
+ .stimplacer {
+     text-align: center;
+     display: block;
+     position:absolute
+ }
+ 
+.img-set {
+    border: 1px solid white;
+    width: 170px;
+    margin: 0 auto;
+    test-align:center;
+}
+
+ 
+figcaption{
+  /* background-color: #FFF; */
+  /* padding-top: 30px; */
+}
