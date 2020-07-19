@@ -17,17 +17,31 @@ var trials = [];
 var trialindex = 0;
 
 function responseListener(aresponse){//global so it'll be just sitting here available for the trial objects to use. So, it must accept whatever they're passing.
-//    console.log("responseListener heard: "+aresponse); //diag
+    console.log("responseListener heard: "+aresponse); //diag
+    
     trials[trialindex].response = aresponse;
     trials[trialindex].responseTime= Date.now();
     
-    $.post('/response',{myresponse:JSON.stringify(trials[trialindex])},function(success){
-    	console.log(success);//For now server returns the string "success" for success, otherwise error message.
-    });
+    // $.post('/response',{myresponse:JSON.stringify(trials[trialindex])},function(success){
+    // 	console.log(success);//For now server returns the string "success" for success, otherwise error message.
+    // });
     
     //can put this inside the success callback, if the next trial depends on some server-side info.
     trialindex++; //increment index here at the last possible minute before drawing the next trial, so trials[trialindex] always refers to the current trial.
-    nextTrial();
+    clear_pause_next();
+}
+
+function clear_pause_next(){
+    console.log("in")
+    //position next button using same viewport dimensions thing as stim drawing.
+    //nice to recalc as often as possible in case size changes? Probably there's a better way?
+    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
+    const buttontop = vh / 2 - 50;
+    const buttonleft = vw / 2 - 50;
+    
+    document.getElementById("uberdiv").innerHTML = "<button style='position:absolute; top:"+buttontop+"px; left:"+buttonleft+"px' onclick = nextTrial()>Next</button>";
+//    setTimeout(nextTrial,1000);
 }
 
 function nextTrial(){
@@ -48,62 +62,28 @@ function makeOption(prob, pay, role, itemtype){
     this.pay = pay;
     this.itemtype = itemtype;
     this.role = role;
-
-    this.drawMe = function(x, y){
-	console.log("Drew: "+prob+":"+pay+":"+itemtype)
-    }
 }
 
-function makeTrial(targ, comp, decoy, bg){
+function makeTrial(targ, comp, decoy, bg, pres_order){
     this.targ = targ;
     this.comp = comp;
     this.decoy = decoy;
     this.bg = bg;
 
-    this.pres_order = shuffle([1,2,3]);
+    this.pres_order = pres_order;
     
     this.ppntID = localStorage.getItem("ppntID");
     this.drawMe = function(targdiv){
 	this.drawTime = Date.now();
 
-	targ.drawMe(0,0);
-	comp.drawMe(10,10);
-	decoy.drawMe(20,20);
-	// var responses = "<button onclick='responseListener(\"yes\")'>Yes</button><button onclick='responseListener(\"no\")'>No</button>";
-	// document.getElementById(targdiv).innerHTML=
-	//     "<div class='trialdiv'><p>"+this.questiontext+"</br>"+responses+"</p></div>";
-    }
-}
-
-
-//****************************************************************************************************
-//Stimuli
-//var stim = shuffle(["Does this question have a correct answer?","What is the correct answer to this question?"]);
-//trials = stim.map(function(x){return new makeTrial(x)});
-
-trials = [
-    new makeTrial(
-	targ = new makeOption(prob=.1, pay=10, role="targ", itemtype="urn"),
-	comp = new makeOption(prob=.2, pay=20, role="comp", itemtype="ticket"),
-	decoy = new makeOption(prob=.3, pay=30, role="decoy", itemtype="urn"),
-	bg = "urn"),
-    new makeTrial(
-	targ = new makeOption(prob=.4, pay=40, role="targ", itemtype="urn"),
-	comp = new makeOption(prob=.5, pay=50, role="comp", itemtype="ticket"),
-	decoy = new makeOption(prob=.6, pay=100, role="decoy", itemtype="urn"),
-	bg = "urn")
-]
-
-//nextTrial();
-
 function trial_drawstring(targ, comp, decoy, pres_order){
-
 function stim_drawstring(left, top, img, prob, pay){
     return(
 	"<span class='stimplacer' style='left:"+left+"px; top:"+top+"px'>"+
 "<figure class='img-set'>"+
   "<img src='img/"+img+".png'"+
-    "width='100' height='100'"+
+	    "width='100' height='100'"+
+	    "onclick = responseListener(['"+prob+"','"+pay+"'])"+
     ">"+
   "<figcaption>"+prob+" chance<br>"+
     "of winning $"+pay+""+
@@ -133,7 +113,6 @@ function stim_drawstring(left, top, img, prob, pay){
 	]
     ]
 
-    console.log(draw_cords[pres_order[0]][0])
     return(
 	stim_drawstring(draw_cords[pres_order[0]][1], draw_cords[pres_order[0]][0], targ.itemtype, targ.prob, targ.pay)+
 	    stim_drawstring(draw_cords[pres_order[1]][1], draw_cords[pres_order[1]][0], comp.itemtype, comp.prob, comp.pay)+
@@ -141,9 +120,38 @@ function stim_drawstring(left, top, img, prob, pay){
     )
     
 }
-document.getElementById("uberdiv").innerHTML = trial_drawstring(
-    new makeOption(prob=.1, pay=10, role="targ", itemtype="urn"),
-    new makeOption(prob=.2, pay=20, role="comp", itemtype="ticket"),
-    new makeOption(prob=.3, pay=30, role="decoy", itemtype="urn"),
-    [2,1,0]
-)
+	document.getElementById("uberdiv").innerHTML = trial_drawstring(this.targ, this.comp, this.decoy, this.pres_order);
+    }
+}
+
+
+//****************************************************************************************************
+//Stimuli
+//var stim = shuffle(["Does this question have a correct answer?","What is the correct answer to this question?"]);
+//trials = stim.map(function(x){return new makeTrial(x)});
+
+trials = [
+    new makeTrial(
+	targ = new makeOption(prob=.1, pay=10, role="targ", itemtype="urn"),
+	comp = new makeOption(prob=.2, pay=20, role="comp", itemtype="ticket"),
+	decoy = new makeOption(prob=.3, pay=30, role="decoy", itemtype="urn"),
+	bg = "urn",
+	shuffle([0,1,2])),
+    new makeTrial(
+	targ = new makeOption(prob=.4, pay=40, role="targ", itemtype="ticket"),
+	comp = new makeOption(prob=.5, pay=50, role="comp", itemtype="ticket"),
+	decoy = new makeOption(prob=.6, pay=100, role="decoy", itemtype="urn"),
+	bg = "urn",
+	shuffle([0,1,2]))
+]
+
+//nextTrial();
+
+trials[0].drawMe()
+
+// document.getElementById("uberdiv").innerHTML = trial_drawstring(
+//     new makeOption(prob=.1, pay=10, role="targ", itemtype="urn"),
+//     new makeOption(prob=.2, pay=20, role="comp", itemtype="ticket"),
+//     new makeOption(prob=.3, pay=30, role="decoy", itemtype="urn"),
+//     [2,1,0]
+// )
