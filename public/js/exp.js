@@ -42,24 +42,24 @@ function responseListener(aresponse){//global so it'll be just sitting here avai
     saveobj = {} //for convenience... saving trialobj was a nice idea, having options as objects inside trial objects was a nice idea, they're not super compatible.
     saveobj.bg = trials[trialindex].bg
     saveobj.ppntid = trials[trialindex].ppntID
+    saveobj.drawTime = trials[trialindex].drawTime
     saveobj.responsetime = trials[trialindex].responseTime
+
+    
     saveobj.chosen_prob = trials[trialindex].chosen_prob
     saveobj.chosen_pay = trials[trialindex].chosen_pay
     saveobj.chosen_role = trials[trialindex].chosen_role
 
     saveobj.targ_prob = trials[trialindex].targ.prob
     saveobj.targ_pay = trials[trialindex].targ.pay
-    saveobj.targ_role = trials[trialindex].targ.role
     saveobj.targ_itemtype = trials[trialindex].targ.itemtype
     
     saveobj.comp_prob = trials[trialindex].comp.prob
     saveobj.comp_pay = trials[trialindex].comp.pay
-    saveobj.comp_role = trials[trialindex].comp.role
     saveobj.comp_itemtype = trials[trialindex].comp.itemtype
 
     saveobj.decoy_prob = trials[trialindex].decoy.prob
     saveobj.decoy_pay = trials[trialindex].decoy.pay
-    saveobj.decoy_role = trials[trialindex].decoy.role
     saveobj.decoy_itemtype = trials[trialindex].decoy.itemtype
 
     $.post('/response',{myresponse:JSON.stringify(saveobj)},function(success){
