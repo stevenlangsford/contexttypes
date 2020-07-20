@@ -15,7 +15,7 @@ app.use(favicon(__dirname + '/public/psi.ico')); //You might want to change this
 
 app.use(session({
   cookieName: 'session',
-  secret: process.env.COOKIE_SECRET,
+    secret: "longer_strings_are_better_but_dragon1srbest",//process.env.COOKIE_SECRET,
   duration: 30 * 60 * 1000,
   activeDuration: 5 * 60 * 1000,
 }));

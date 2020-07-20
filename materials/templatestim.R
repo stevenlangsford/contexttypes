@@ -8,6 +8,8 @@ theme_set(theme_light())
 mindistance_prob <- .1 #rnd gen prob values must be in .1 : .9
 mindistance_pay <- 3 #rnd gen pay vals must be > 3
 
+decoration_on <- FALSE; #v1 doesn't use item or bg decorations! They're v2.
+
 design_template <- function() {
     ##First creates a df with stim type specs (randomizing some uninteresting)
     ##shuffles these (ensuring 'old role' stim can't appear first)
@@ -28,7 +30,6 @@ design_template <- function() {
     ##Properties you want to randomize & rugsweep:
         item_type <- c("ticket", "urn")
         bg_type <- c("ticket", "urn")
-    
 
     ##build the thing:
     for (mylastrole in last_role) {
@@ -294,6 +295,21 @@ for (i in 1:nrow(stimset)) {
     }
 }
 stimset <- stimset %>% select(-design_bg_consistent) #UGH.
+
+
+##bg and itemtype are being held in reserve for v2!
+##switch them off for v1.
+if (!decoration_on) {
+    defaultitem <- "urn"
+
+    stimset$design_item_type <- "null"
+
+    stimset$targ_item <- defaultitem
+    stimset$comp_item <- defaultitem
+    stimset$decoy_item <- defaultitem
+
+    stimset$design_bg_type <- defaultitem
+}
 
 ##OUTPUT: two different arrangements for convenient sanity-checking:
 stim_bytrial <- add_calc_properties(stimset)
