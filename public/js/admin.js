@@ -31,7 +31,7 @@ function quiz(){
 	"<input type='radio' name='q2' id='q2a' value='a'>&nbsp Each option shows its probabilty of paying out, and the amount that will be added to your score if it does pay out.<br/>"+
 	"<input type='radio' name='q2' id='q2b' value='b'>&nbsp Each option shows its probability of giving zero, and a payout that will be added to your score if the option pays out. <br/>"+
 	"<input type='radio' name='q2' id='q2c' value='c'>&nbsp Each option has a fuel tank, drawn as a black bar, and a payload, drawn as a yellow circle. <br/>"+
-	"<input type='radio' name='q2' id='q2d' value='d'>&nbsp Each option has a payout value, and a probability value, which must be met by the end of the study to convert the option into points.<br/>"+
+	"<input type='radio' name='q2' id='q2d' value='d'>&nbsp Each option has a payout value and a probability value which must both be met by the end of the study to convert the option into points.<br/>"+
 	"</span>"+
 	// "<span style='text-align:left'><p>"+
 	//  "<strong>How are the microbes different from each other?</strong></br>"+

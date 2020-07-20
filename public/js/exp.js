@@ -1,7 +1,3 @@
-//Generic sequence-of-trials
-//If that's all you want, all you need to edit is the makeTrial object and the responseListener. Give maketrial an appropriate constructor that accept the key trial properties, a drawMe function, and something that will hit responseListener.
-//then put a list of trial-property-setter entries in 'stim' and you're golden.
-
 function shuffle(a) { //via https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
     var j, x, i;
     for (i = a.length - 1; i > 0; i--) {
@@ -13,34 +9,78 @@ function shuffle(a) { //via https://stackoverflow.com/questions/6274339/how-can-
     return a;
 }
 
-const stim_per_ppnt = 5; //should be ~70?
+const stim_per_ppnt = 3; //should be ~70?
 var stim_sofar = 0; //Slightly funky randomization: a pool of stim larger than any one participant will see, fixed order, random starting point, wraps. (ok?)
 
+var ppnt_score = 0;
+var robot_score = 0;
+var chance_score = 0;
+
 function responseListener(aresponse){//global so it'll be just sitting here available for the trial objects to use. So, it must accept whatever they're passing.
-    console.log("responseListener heard: "+aresponse); //diag
+    //feedback:
+    //ppnt choice is evaluated exactly as presented.
+    if(Math.random()< aresponse[0]){
+	ppnt_score += parseFloat(aresponse[1])
+    }
+    //'perfect play' robot takes expected value of targ option. Kinda cheating? Meh.
+    robot_score += trials[trialindex].targ.prob * trials[trialindex].targ.pay;
+    //chance bot is also honest, evals as presented.
+    var rnd_pick = shuffle(["targ","comp","decoy"])[0]
+    var rnd_prob = trials[trialindex][rnd_pick].prob
+    var rnd_pay = trials[trialindex][rnd_pick].pay    
+    if(Math.random() < rnd_prob){ 
+	chance_score += rnd_pay
+    }
+
     
     trials[trialindex].response = aresponse;
     trials[trialindex].responseTime= Date.now();
+    trials[trialindex].chosen_prob = aresponse[0];
+    trials[trialindex].chosen_pay = aresponse[1];
+    trials[trialindex].chosen_role = aresponse[2];
+
+    saveobj = {} //for convenience... saving trialobj was a nice idea, having options as objects inside trial objects was a nice idea, they're not super compatible.
+    saveobj.bg = trials[trialindex].bg
+    saveobj.ppntid = trials[trialindex].ppntID
+    saveobj.responsetime = trials[trialindex].responseTime
+    saveobj.chosen_prob = trials[trialindex].chosen_prob
+    saveobj.chosen_pay = trials[trialindex].chosen_pay
+    saveobj.chosen_role = trials[trialindex].chosen_role
+
+    saveobj.targ_prob = trials[trialindex].targ.prob
+    saveobj.targ_pay = trials[trialindex].targ.pay
+    saveobj.targ_role = trials[trialindex].targ.role
+    saveobj.targ_itemtype = trials[trialindex].targ.itemtype
     
-    // $.post('/response',{myresponse:JSON.stringify(trials[trialindex])},function(success){
-    // 	console.log(success);//For now server returns the string "success" for success, otherwise error message.
-    // });
+    saveobj.comp_prob = trials[trialindex].comp.prob
+    saveobj.comp_pay = trials[trialindex].comp.pay
+    saveobj.comp_role = trials[trialindex].comp.role
+    saveobj.comp_itemtype = trials[trialindex].comp.itemtype
+
+    saveobj.decoy_prob = trials[trialindex].decoy.prob
+    saveobj.decoy_pay = trials[trialindex].decoy.pay
+    saveobj.decoy_role = trials[trialindex].decoy.role
+    saveobj.decoy_itemtype = trials[trialindex].decoy.itemtype
+
+    console.log(JSON.stringify(trials[trialindex]))
+    
+    $.post('/response',{myresponse:JSON.stringify(saveobj)},function(success){
+    	console.log(success);//For now server returns the string "success" for success, otherwise error message.
+    });
     
     //can put this inside the success callback, if the next trial depends on some server-side info.
     stim_sofar++;
-    trialindex = (trialindex+1) % trials.length; //increment index here at the last possible minute before drawing the next trial, so trials[trialindex] always refers to the current trial.
+    trialindex = (trialindex + 1) % trials.length; //increment index here at the last possible minute before drawing the next trial, so trials[trialindex] always refers to the current trial.
     clear_pause_next();
 }
 
 function clear_pause_next(){
-    console.log("in")
     //position next button using same viewport dimensions thing as stim drawing.
     //nice to recalc as often as possible in case size changes? Probably there's a better way?
     const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
     const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
     const buttontop = vh / 2 - 50;
-    const buttonleft = vw / 2 - 50;
-    
+    const buttonleft = vw / 2 - 50;    
     document.getElementById("uberdiv").innerHTML = "<button style='position:absolute; top:"+buttontop+"px; left:"+buttonleft+"px' onclick = nextTrial()>Next</button>";
 //    setTimeout(nextTrial,1000);
 }
@@ -49,6 +89,9 @@ function nextTrial(){
     if(stim_sofar < stim_per_ppnt){
 	trials[trialindex].drawMe("uberdiv");
     }else{
+	localStorage.setItem("ppnt_score",ppnt_score.toFixed(2));
+	localStorage.setItem("robot_score",robot_score.toFixed(2));
+	localStorage.setItem("chance_score",chance_score.toFixed(2));
 	$.post("/finish",function(data){window.location.replace(data)});
     }
 }
@@ -78,13 +121,13 @@ function makeTrial(targ, comp, decoy, bg, pres_order){
 	this.drawTime = Date.now();
 
 function trial_drawstring(targ, comp, decoy, pres_order){
-function stim_drawstring(left, top, img, prob, pay){
+    function stim_drawstring(left, top, img, prob, pay, role){
     return(
 	"<span class='stimplacer' style='left:"+left+"px; top:"+top+"px'>"+
 "<figure class='img-set'>"+
   "<img src='img/"+img+".png'"+
 	    "width='100' height='100'"+
-	    "onclick = responseListener(['"+prob+"','"+pay+"'])"+
+	    "onclick = responseListener(['"+prob+"','"+pay+"','"+role+"'])"+
     ">"+
   "<figcaption style='width:200px; left:-10px'>"+prob+" chance<br>"+
     "of winning $"+pay+""+
@@ -115,9 +158,9 @@ function stim_drawstring(left, top, img, prob, pay){
     ]
 
     return(
-	stim_drawstring(draw_cords[pres_order[0]][1], draw_cords[pres_order[0]][0], targ.itemtype, targ.prob, targ.pay)+
-	    stim_drawstring(draw_cords[pres_order[1]][1], draw_cords[pres_order[1]][0], comp.itemtype, comp.prob, comp.pay)+
-	    stim_drawstring(draw_cords[pres_order[2]][1], draw_cords[pres_order[2]][0], decoy.itemtype, decoy.prob, decoy.pay)
+	stim_drawstring(draw_cords[pres_order[0]][1], draw_cords[pres_order[0]][0], targ.itemtype, targ.prob, targ.pay, "targ")+
+	    stim_drawstring(draw_cords[pres_order[1]][1], draw_cords[pres_order[1]][0], comp.itemtype, comp.prob, comp.pay, "comp")+
+	    stim_drawstring(draw_cords[pres_order[2]][1], draw_cords[pres_order[2]][0], decoy.itemtype, decoy.prob, decoy.pay, "decoy")
     )
     
 }
