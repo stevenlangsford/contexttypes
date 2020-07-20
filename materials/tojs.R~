@@ -1,0 +1,18 @@
+##js template
+## new makeTrial(
+##     targ = new makeOption(prob=.1, pay=10, role="targ", itemtype="urn"),
+##     comp = new makeOption(prob=.2, pay=20, role="comp", itemtype="ticket"),
+##     decoy = new makeOption(prob=.3, pay=30, role="decoy", itemtype="urn"),
+##     bg = "urn",
+##     shuffle([0,1,2]))
+
+i <- 1#loop
+with(stim_bytrial[i, ],
+paste0("new makeTrial(
+    targ = new makeOption(prob=",targ_prob, ",
+ pay=",targ_pay,",
+ role=\"targ\", itemtype=\"",,"\"),
+    comp = new makeOption(prob=.2, pay=20, role=\"comp\", itemtype=\"ticket\"),
+    decoy = new makeOption(prob=.3, pay=30, role=\"decoy\", itemtype=\"urn\"),
+    bg = \"urn\",
+    shuffle([0,1,2]))"

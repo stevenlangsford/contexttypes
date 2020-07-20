@@ -1,0 +1,7 @@
+trials = [
+new makeTrial(targ = new makeOption(prob=0.56,pay=10.32,role="targ", itemtype="urn"),comp = new makeOption(prob=0.77, pay=7.49, role="comp", itemtype="urn"),decoy = new makeOption(prob=0.47, pay=10.32, role="decoy", itemtype="ticket"), bg = "urn",shuffle([0,1,2]))
+,
+new makeTrial(targ = new makeOption(prob=0.97,pay=2.86,role="targ", itemtype="urn"),comp = new makeOption(prob=0.63, pay=4.41, role="comp", itemtype="urn"),decoy = new makeOption(prob=0.9, pay=2.86, role="decoy", itemtype="urn"), bg = "urn",shuffle([0,1,2]))
+,
+new makeTrial(targ = new makeOption(prob=0.72,pay=3.87,role="targ", itemtype="urn"),comp = new makeOption(prob=0.97, pay=2.86, role="comp", itemtype="urn"),decoy = new makeOption(prob=0.72, pay=0.33, role="decoy", itemtype="urn"), bg = "urn",shuffle([0,1,2]))
+]
