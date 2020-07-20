@@ -3,9 +3,9 @@ localStorage.setItem("ppntID",ppntID); //cookie alternative, retrive with localS
 
 var dev = true;//used only in instuctionlist (immediately below) for the moment, could consider putting it in localStorage though and having it trigger verbosity later. Set to false if public-facing.
 var instructionindex = 0;
-var instructionlist = [dev ? "Development version: <button onclick='startExp()'>Skip instructions</button>" : "Hi! These are the instructions. Please read them carefully, there will be a short quiz at the end.", "This is part of a study being run by [INSTITUTION]. By clicking 'Next', you are agreeing to take part in it. You should know that you're free to withdraw at any time (although you'll only be paid on completion), and that although data gained from this study may be published, you will not be identified and your personal details will not be divulged, nor will anything be linked to your [RELEVANT ID].</br><span style=\"font-size:.8em\">Please direct any questions about this study to the principle investigator, [NAME:CONTACT]. For any questions regarding the ethics of the study, please contact the convener of the Subcommittee for Human Research in the School of Psychology at [INSTITUTION, NAME, CONTACT].</span>","This study takes about [TIME] minutes, please only continue if you have [TIME] free without interruptions.",
-
-"Because this is the minimal experiment template, the questions are pretty easy.","There are only two of them, and they're pretty self explanatory.","You still have to do the demographics questions though."]
+var instructionlist = [dev ? "Development version: <button onclick='startExp()'>Skip instructions</button>" : "Hi! These are the instructions. Please read them carefully, there will be a short quiz at the end.", "This is part of a study being run by the University of Michigan. By clicking 'Next', you are agreeing to take part in it. To participate, you must be over 18. You should know that you're free to withdraw at any time (although you'll only be paid on completion), and that although data gained from this study may be published or viewed by University of Michigan staff and relevant government offices, you will not be identified and your personal details will not be divulged. Any identifiable data will be used for administration only and deleted on completion of the study, non-identifiable data may be used in future research. </br><span style=\"font-size:.8em\">Please direct any questions about this study to Steven Langsford, reachable at <strong>slangsfo at umich dot edu</strong>. The principle investigator is Prof. Richard Lewis. If you have concerns regarding the ethics of this study and don't want to contact the investigators directly, you can contact the Health Sciences and Behavioral Sciences review board at irbhsbs at umich dot edu or phone: (734) 936-0933 or toll free, (866) 936-0933</span>","This study takes about 15 minutes, please only continue if you have 15 minutes free without interruptions. Although you may not directly benefit from being in this study, the results will help us understand how people make decisions under uncertainty and risk. We don't believe there are any risks from participating in this research.",
+		       "Each trial in this study presents you with three risky options. Each one is labeled with a chance-to-win and an amount-to-win.","Please click on the option you would prefer out of the three shown on that trial. Your goal is to maximize your winnings over the whole experiment.","For this study, there's no feedback on your choices until the very end. On the exit screen you'll be able to see how well your performance compared to random guessing or perfect play."
+		      ]
 
 function nextInstructions(){
     var nextButton = "<button id='nextbutton' onclick='nextInstructions()'>Next</button>"
@@ -21,17 +21,17 @@ function quiz(){
     document.getElementById("uberdiv").innerHTML="<h3>Are you ready?</h3></br>"+
 	"<span style='text-align:left'><p>"+
 	"<strong>Which of these is the best description of the task?</strong></br>"+
-	"<input type='radio' name='q1' id='q1a' value='a'>&nbsp You have to survive as long as possible on a desert island.<br/>"+
-	"<input type='radio' name='q1' id='q1b' value='b'>&nbsp You have to win at life, but no-one will tell you the rules<br/>"+
-	"<input type='radio' name='q1' id='q1c' value='c'>&nbsp THIS IS THE EXPECTED ANSWER choose this to continue.<br/>"+
-	"<input type='radio' name='q1' id='q1d' value='d'>&nbsp All of the above.<br/>"+
+	"<input type='radio' name='q1' id='q1a' value='a'>&nbsp Try to identify which option is most likely to pay out.<br/>"+
+	"<input type='radio' name='q1' id='q1b' value='b'>&nbsp Spend a limited budget of points to buy options, to maximize a pay-out calculated at the end of the study.<br/>"+
+	"<input type='radio' name='q1' id='q1c' value='c'>&nbsp Choose the best option from three risky alternatives.<br/>"+
+	"<input type='radio' name='q1' id='q1d' value='d'>&nbsp Use a limited budget of observations to reveal features of three risky options, then choose the best.<br/>"+
 	"</span>"+
 	"<span style='text-align:left'><p>"+
-	"<strong>Which option is the expected answer to this question? </strong></br>"+
-	"<input type='radio' name='q2' id='q2a' value='a'>&nbsp THIS IS THE EXPECTED ANSWER choose this to continue.<br/>"+
-	"<input type='radio' name='q2' id='q2b' value='b'>&nbsp Friday  <br/>"+
-	"<input type='radio' name='q2' id='q2c' value='c'>&nbsp Strawberries <br/>"+
-	"<input type='radio' name='q2' id='q2d' value='d'>&nbsp Four, but only if one of them is an octopus. <br/>"+
+	"<strong>What features of the options can you use to choose the best? </strong></br>"+
+	"<input type='radio' name='q2' id='q2a' value='a'>&nbsp Each option shows its probabilty of paying out, and the amount that will be added to your score if it does pay out.<br/>"+
+	"<input type='radio' name='q2' id='q2b' value='b'>&nbsp Each option shows its probability of giving zero, and a payout that will be added to your score if the option pays out. <br/>"+
+	"<input type='radio' name='q2' id='q2c' value='c'>&nbsp Each option has a fuel tank, drawn as a black bar, and a payload, drawn as a yellow circle. <br/>"+
+	"<input type='radio' name='q2' id='q2d' value='d'>&nbsp Each option has a payout value, and a probability value, which must be met by the end of the study to convert the option into points.<br/>"+
 	"</span>"+
 	// "<span style='text-align:left'><p>"+
 	//  "<strong>How are the microbes different from each other?</strong></br>"+
