@@ -44,7 +44,6 @@ function responseListener(aresponse){//global so it'll be just sitting here avai
     saveobj.ppntid = trials[trialindex].ppntID
     saveobj.drawTime = trials[trialindex].drawTime
     saveobj.responsetime = trials[trialindex].responseTime
-
     
     saveobj.chosen_prob = trials[trialindex].chosen_prob
     saveobj.chosen_pay = trials[trialindex].chosen_pay
@@ -3064,7 +3063,7 @@ new makeTrial(targ = new makeOption(prob=0.97,pay=12.96,role="targ", itemtype="u
 
 //nextTrial();
 
-trials[0].drawMe()
+trials[trialindex].drawMe()
 
 // document.getElementById("uberdiv").innerHTML = trial_drawstring(
 //     new makeOption(prob=.1, pay=10, role="targ", itemtype="urn"),
