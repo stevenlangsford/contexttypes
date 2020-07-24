@@ -8,7 +8,7 @@ theme_set(theme_light())
 mindistance_prob <- .1 #rnd gen prob values must be in .1 : .9
 mindistance_pay <- 3 #rnd gen pay vals must be > 3
 
-decoration_on <- FALSE; #v1 doesn't use item or bg decorations! They're v2.
+decoration_on <- TRUE; #v1 doesn't use item or bg decorations! They're v2.
 
 design_template <- function() {
     ##First creates a df with stim type specs (randomizing some uninteresting)
@@ -326,4 +326,6 @@ stim_byfeature <- with(stimset,
                        )
                        )%>% mutate(value = prob * pay)
 
+write.csv(stim_bytrial, file = "stimbytrial.csv", row.names = FALSE)
+write.csv(stim_byfeature, file = "stimbyfeature.csv", row.names = FALSE)
 ## with(bob, table(paste0(last_role, current_role)))

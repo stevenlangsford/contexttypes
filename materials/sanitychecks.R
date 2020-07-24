@@ -20,6 +20,11 @@
 ## with(stimdist, mean(urn_value)) 
 ## with(stimdist, mean(ticket_value))
 
+rm(list = ls())
+
+stim_byfeature <- read.csv("stimbyfeature.csv")
+stim_bytrial <- read.csv("stimbytrial.csv")
+
 viewstim <- function(stimset, arow) {
     pointsize <- 5
     myplot <- ggplot(stimset[arow, ]) +
@@ -34,12 +39,12 @@ viewstim <- function(stimset, arow) {
     return(myplot)
 }
 
-## for (i in 1:20) {
-## x11(); print(viewstim(stimset, i));
-## }
+for (i in sample(1:nrow(stim_bytrial), 20)) {
+ggsave(viewstim(stim_bytrial, i), file = paste0("sanitychecks/stimsample/row", i, ".png"))
+}
 
 
-(ggplot(stim_bytrial, aes(x = targ_value)) + geom_histogram() + ggtitle("Targ value")+
+featurehists <- (ggplot(stim_bytrial, aes(x = targ_value)) + geom_histogram() + ggtitle("Targ value")+
 
 ggplot(stim_bytrial, aes(x = targ_pay)) + geom_histogram() + ggtitle("Targ pay") +
 
@@ -55,25 +60,31 @@ ggplot(stim_bytrial, aes(x = decoy_pay)) + geom_histogram() + ggtitle("Decoy pay
 
 ggplot(stim_bytrial, aes(x = decoy_prob)) + geom_histogram() + ggtitle("Decoy prob"))
 
+ggsave(featurehists, file = "sanitychecks/featurehists.png")
 
-(ggplot(stim_bytrial, aes(x = targ_value - comp_value)) + geom_histogram() +
+differencehists <- (ggplot(stim_bytrial, aes(x = targ_value - comp_value)) + geom_histogram() +
     ggtitle("Targ-comp value difference") +
 ggplot(stim_bytrial, aes(x = targ_prob - comp_prob)) + geom_histogram() +
     ggtitle("Targ-comp prob difference") +
-    ggplot(stim_bytrial, aes(x = targ_pay - comp_pay)) + geom_histogram(binsize = 1) +
+    ggplot(stim_bytrial, aes(x = targ_pay - comp_pay)) + geom_histogram() +
 ggtitle("Targ-comp pay difference") +
-    ggplot(stim_bytrial, aes(x = targ_pay - comp_pay)) + geom_histogram(binsize = 1) +
+    ggplot(stim_bytrial, aes(x = targ_pay - comp_pay)) + geom_histogram() +
 ggtitle("Targ-comp pay zoom-in") + xlim(c(-5, 5))
 )
 
+ggsave(differencehists, file = "sanitychecks/distancehists.png")
+
+targvsdecoy <- 
 (ggplot(stim_bytrial, aes(x=targ_value - decoy_value)) + geom_histogram() +
     ggtitle("Targ-decoy value difference") +
 ggplot(stim_bytrial, aes(x=targ_prob - decoy_prob)) + geom_histogram() +
     ggtitle("Targ-decoy prob difference") +
-    ggplot(stim_bytrial, aes(x=targ_pay - decoy_pay)) + geom_histogram(binsize = 1) +
+    ggplot(stim_bytrial, aes(x=targ_pay - decoy_pay)) + geom_histogram(binwidth = 1) +
     ggtitle("Targ-decoy pay difference"))
 
+ggsave(targvsdecoy, file = "sanitychecks/targvsdecoy.png")
 
+role_overlayhists <- 
 ggplot(stim_byfeature, aes(x = prob, fill=role)) +
     geom_histogram(position = "identity", alpha = .3) +
     ggtitle("prob by role") +
@@ -81,7 +92,9 @@ ggplot(stim_byfeature, aes(x = pay, fill=role)) +
     geom_histogram(position = "identity", alpha = .3) +
     ggtitle("payoff by role")
 
+ggsave(role_overlayhists, file = "sanitychecks/roleoverlay.png")
 
+ticketvsurnfeatures <- 
 (ggplot(stim_byfeature, aes(x = prob, fill=item)) +
  geom_histogram(position = "identity", alpha = .3) +
  ggtitle("prob by item") + guides(fill = FALSE) +
@@ -92,7 +105,9 @@ ggplot(stim_byfeature, aes(x = pay, fill=role)) +
      geom_histogram(position = "identity", alpha = .3) +
      ggtitle("value by item"))
 
+ggsave(ticketvsurnfeatures, file = "sanitychecks/ticketvsurnfeatures.png")
 
+bgfeatures <- 
 (ggplot(stim_byfeature, aes(x = prob, fill=bg_type)) +
  geom_histogram(position = "identity", alpha = .3) +
  ggtitle("prob by bg") + guides(fill = FALSE) +
@@ -103,6 +118,6 @@ ggplot(stim_byfeature, aes(x = pay, fill=role)) +
      geom_histogram(position = "identity", alpha = .3) +
      ggtitle("value by bg"))
 
-
+ggsave(bgfeatures, file = "sanitychecks/bgfeatures.png")
 
 #summary(stim_bytrial)

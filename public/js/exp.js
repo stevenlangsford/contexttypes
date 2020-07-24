@@ -9,7 +9,7 @@ function shuffle(a) { //via https://stackoverflow.com/questions/6274339/how-can-
     return a;
 }
 
-const stim_per_ppnt = 10; //should be ~70?
+const stim_per_ppnt = 70; //should be ~70?
 var stim_sofar = 0; //Slightly funky randomization: a pool of stim larger than any one participant will see, fixed order, random starting point, wraps. (ok?)
 
 var ppnt_score = 0;
@@ -40,6 +40,7 @@ function responseListener(aresponse){//global so it'll be just sitting here avai
     trials[trialindex].chosen_role = aresponse[2];
 
     saveobj = {} //for convenience... saving trialobj was a nice idea, having options as objects inside trial objects was a nice idea, they're not super compatible.
+    saveobj.seq = (stim_sofar + 1)
     saveobj.bg = trials[trialindex].bg
     saveobj.ppntid = trials[trialindex].ppntID
     saveobj.drawTime = trials[trialindex].drawTime
@@ -79,6 +80,7 @@ function clear_pause_next(){
     const buttontop = vh / 2 - 50;
     const buttonleft = vw / 2 - 50;    
     document.getElementById("uberdiv").innerHTML = "<button style='position:absolute; top:"+buttontop+"px; left:"+buttonleft+"px' onclick = nextTrial()>Next</button>";
+	document.getElementById("footerdiv").innerHTML = ""
 //    setTimeout(nextTrial,1000);
 }
 
@@ -86,6 +88,7 @@ function nextTrial(){
     if(stim_sofar < stim_per_ppnt){
 	trials[trialindex].drawMe("uberdiv");
     }else{
+	document.getElementById("footerdiv").innerHTML = ""
 	localStorage.setItem("ppnt_score",ppnt_score.toFixed(2));
 	localStorage.setItem("robot_score",robot_score.toFixed(2));
 	localStorage.setItem("chance_score",chance_score.toFixed(2));
@@ -116,7 +119,7 @@ function makeTrial(targ, comp, decoy, bg, pres_order){
     this.ppntID = localStorage.getItem("ppntID");
     this.drawMe = function(targdiv){
 	this.drawTime = Date.now();
-
+	document.getElementById("footerdiv").innerHTML = "<p>Choice "+(stim_sofar + 1)+" of "+stim_per_ppnt+"</p>"
 function trial_drawstring(targ, comp, decoy, pres_order){
     function stim_drawstring(left, top, img, prob, pay, role){
     return(
@@ -126,8 +129,8 @@ function trial_drawstring(targ, comp, decoy, pres_order){
 	    "width='100' height='100'"+
 	    "onclick = responseListener(['"+prob+"','"+pay+"','"+role+"'])"+
     ">"+
-  "<figcaption style='width:200px; left:-10px'>"+prob+" chance<br>"+
-    "of winning $"+pay+""+
+  "<figcaption style='width:200px; left:-10px'><strong>"+prob+"</strong> chance<br>"+
+    "of winning <strong>$"+pay+"</strong>"+
     "</figcaption>"+
     "</figure>"+
 	    "</span>"
